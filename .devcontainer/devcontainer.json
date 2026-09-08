@@ -1,0 +1,70 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "Existing Dockerfile",
+	"workspaceFolder": "/storm_ws",
+	"mounts": [
+    "source=${localWorkspaceFolder}/storm_ws,target=/storm_ws,type=bind,consistency=cached",
+	"source=/tmp/.X11-unix,target=/tmp/.X11-unix:rw,type=bind,consistency=cached"
+	],
+	// UNCOMMENT
+	// "build": {
+	// 	// Sets the run context to one level up instead of the .devcontainer folder.
+	// 	"context": "..",
+	// 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+	// 	"dockerfile": "Dockerfile"
+	// },
+	"image": "storm_spot_merged:latest",
+	
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+// 	"runArgs": [
+//   "--env", "DISPLAY=${env:DISPLAY}",
+//   "--volume", "/tmp/.X11-unix:/tmp/.X11-unix"
+// 	],
+
+// 	"containerEnv":{"QT_X11_NO_MITSHM": "1", "DISPLAY":"${localEnv:DISPLAY}"},
+
+	"runArgs": [
+	"--privileged",
+	"--env", "DISPLAY=${env:DISPLAY}",
+	"--env", "QT_X11_NO_MITSHM=1",
+	"--volume", "/tmp/.X11-unix:/tmp/.X11-unix",
+	"--net", "host",
+    "-e", "XAUTHORITY=/tmp/.Xauthority",
+    "-v", "${localEnv:HOME}/.Xauthority:/tmp/.Xauthority", "-v", "/dev:/dev"
+	],
+	"containerEnv": {
+	"DISPLAY": "${env:DISPLAY}",
+	"LIBGL_ALWAYS_SOFTWARE": "1",
+	"XDG_RUNTIME_DIR": "/tmp/runtime-docker"
+	},
+		
+
+
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "cat /etc/os-release",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+			  "ms-python.python",
+			  "ms-toolsai.jupyter"
+			],
+			"settings": {
+			  // usa il backend di VS Code per matplotlib
+			//   "python.matplotlib.backend": "module://vscode_matplotlib_backend.backend",
+			  // fa sì che quando debuggate o lanciate lo script, i plot compaiano nel pannello "Plots"
+			  "python.dataScience.showJupyterVariables": false}
+		  }
+	},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "root"
+}

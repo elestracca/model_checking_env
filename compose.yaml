@@ -1,0 +1,56 @@
+services:
+  spot:
+    build:
+      context: ./spot
+      dockerfile: Dockerfile
+    # user: "1000:1000"
+    image: spot_image
+    command: ""
+    entrypoint: ""
+    volumes:
+      - ./storm_ws:/storm_ws
+    
+
+  storm:
+    build:
+      context: ./storm
+      dockerfile: Dockerfile
+    image: test_ubuntu
+    privileged: true
+    user: "1000:1000"
+    command: ""
+    entrypoint: ""
+    volumes:
+      - ./storm_ws:/storm_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - "${HOME}/.Xauthority:/tmp/.Xauthority"
+      - "/dev:/dev"
+    network_mode: host  #Makes no difference if this is in there or not
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=${QT_X11_NO_MITSHM}
+      - XAUTHORITY=${XAUTHORITY}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE}
+
+  merged_service:
+    build:
+      context: ./merged
+      dockerfile: Dockerfile
+    image: storm_spot_merged
+    privileged: true
+    user: "1000:1000"
+    command: ""
+    entrypoint: ""
+    volumes:
+      - ./storm_ws:/storm_ws
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - "${HOME}/.Xauthority:/tmp/.Xauthority"
+      - "/dev:/dev"
+    network_mode: host  #Makes no difference if this is in there or not
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=${QT_X11_NO_MITSHM}
+      - XAUTHORITY=${XAUTHORITY}
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE}
+      - UMASK=0022
+    

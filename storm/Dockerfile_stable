@@ -1,0 +1,78 @@
+# syntax=docker/dockerfile:1.4
+FROM movesrwth/storm:stable
+RUN mkdir -p /tmp/runtime-docker && chmod 700 /tmp/runtime-docker
+
+# 1️ apt + venv
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      python3 python3-pip python3-venv build-essential \
+ && rm -rf /var/lib/apt/lists/*
+
+# 2️ Crea e popola il venv in /opt/venv
+RUN python3 -m venv /opt/venv \
+ && /opt/venv/bin/pip install --upgrade pip \
+ && /opt/venv/bin/pip install \
+ --no-cache-dir \
+ --disable-pip-version-check \
+ --progress-bar off \
+      stormpy \
+      networkx \
+      matplotlib \
+      ipykernel 
+RUN  /opt/venv/bin/pip install PyQt5 \ 
+     tk \
+     PySide2
+
+RUN apt update && apt install -y python3-tk x11-apps libgl1 libglib2.0-0
+
+RUN apt update && apt install -y \
+    libgl1 \
+    libglib2.0-0 
+RUN apt update && apt install -y \
+    x11-apps \
+    libx11-xcb1 
+RUN apt update && apt install -y \
+    libxcb1 \
+    libxcb-glx0 
+RUN apt update && apt install -y \
+    libxcb-keysyms1 \
+    libxcb-image0
+RUN apt update && apt install -y \
+    libxcb-shm0 
+# RUN apt update && apt install -y \
+#     libxcb-icccm4 
+RUN apt update && apt install -y \
+    libxcb-sync1
+# RUN apt update && apt install -y \
+#     libxcb-render-util0 
+    RUN apt update && apt install -y \
+    libxcb-xfixes0 
+#     RUN apt update && apt install -y \
+#     libxcb-shape0 
+    RUN apt update && apt install -y \
+    libxcb-randr0
+RUN apt update && apt install -y \
+    libxcb-render0
+    RUN apt update && apt install -y \
+    libxcb-xinerama0 
+RUN apt update && apt install -y \
+    libxkbcommon-x11-0
+RUN apt update && apt install -y \
+    libqt5gui5
+
+    RUN apt update && apt install -y \
+    mesa-utils \
+    libosmesa6
+
+
+# RUN apt install libgl1-mesa-glx \
+# libx11-xcb1 
+
+# 3️ Usa il venv come default
+ENV PATH="/opt/venv/bin:${PATH}" \
+    PYTHONPATH="/opt/venv/lib/python3.12/site-packages:${PYTHONPATH}"
+
+# 4️ Workdir, volume e cmd
+WORKDIR /storm_ws
+VOLUME ["/Scrivania/data"]
+CMD ["/bin/bash"]
